@@ -1,0 +1,26 @@
+---
+description: Zustand·폼·라우팅 상태 관리 규칙
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# State, Forms, Routing
+
+## 상태
+
+- 한 컴포넌트에만 속한 UI 상태: `useState` / `useReducer`.
+- 인증, 테마, 토스트 등 전역 클라이언트 상태: Zustand (`src/stores/useAuthStore.ts`).
+- 단순 비동기: `useEffect` + `fetch`, cleanup, 로딩, 에러 처리 필수.
+- 캐시, 포커스 refetch, optimistic update가 필요하면 TanStack Query.
+- 비동기 UI는 Loading / Error / Success 세 상태를 항상 다룬다.
+
+## 폼
+
+- 필드, 검증이 있는 폼은 `react-hook-form` + `zod`.
+- 스키마는 TypeScript 인터페이스와 맞춘다.
+
+## 라우팅
+
+- SPA는 `react-router` v8.
+- 레이아웃으로 계층 구성 (`src/layouts/RootLayout.tsx`).
+- 인증 필요 라우트는 클라이언트에서 리다이렉트로 보호한다.

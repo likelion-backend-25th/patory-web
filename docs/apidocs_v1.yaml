@@ -1,0 +1,6 @@
+openapi: 3.0.3
+info:
+  title: Patory API
+  version: v1
+  description: 로컬 참고용 OpenAPI 초안. 서버 /v3/api-docs가 최신이다.
+paths: {}

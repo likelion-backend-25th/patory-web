@@ -1,0 +1,19 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Spring Boot를 같은 오리진으로 프록시하면 CORS를 피할 수 있다.
+# 백엔드 배포 URL이 정해지면 아래 주석을 해제하고 to를 교체한다.
+# [[redirects]]
+#   from = "/api/*"
+#   to = "https://YOUR_API_HOST/api/:splat"
+#   status = 200
+#   force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

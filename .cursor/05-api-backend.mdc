@@ -1,0 +1,52 @@
+---
+description: Spring Boot REST API 연동 규칙 (/api/v1, DTO, 에러 처리)
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Backend API
+
+- 모든 HTTP 요청은 `/api/{version}` prefix를 사용한다. 기본은 `/api/v1`. Vite proxy → `http://localhost:8080`.
+- API 사양은 백엔드 서버의 `/v3/api-docs`에서 확인한다.
+- 서버 미구동 등으로 연결되지 않는 경우 `docs/apidocs_v1.yaml` 파일을 참고한다.
+- 서버와 로컬 문서의 버전이나 내용이 맞지 않는 경우, 서버쪽 최신 내용으로 로컬 파일(`docs/apidocs_v1.yaml`)을 갱신한다.
+- 백엔드가 새 메이저 API를 제공하면 `/api/v2`처럼 버전을 올린다. 버전 없는 `/api/posts`나 `/posts`는 쓰지 않는다.
+- 한 기능 안에서는 버전을 섞지 않는다. v1 리소스와 v2 리소스를 같이 쓸 때는 백엔드 스펙을 따른다.
+- TypeScript DTO는 백엔드 Java DTO JSON 필드명(보통 camelCase)과 일치시킨다.
+- 네트워크 호출은 `try-catch`로 감싸고, 실패 시 응답 바디의 `message`를 사용자에게 보여준다. 없거나 파싱 실패일 때만 status로 대체한다.
+- 상태 코드: 200/201 성공, 400, 401, 403, 404, 500을 구분 처리한다.
+
+```ts
+interface ApiErrorBody {
+  message: string;
+}
+
+function isApiErrorBody(body: unknown): body is ApiErrorBody {
+  return (
+    typeof body === "object" &&
+    body !== null &&
+    "message" in body &&
+    typeof body.message === "string"
+  );
+}
+
+function readApiErrorMessage(body: unknown, status: number): string {
+  if (isApiErrorBody(body) && body.message.trim() !== "") {
+    return body.message;
+  }
+  return `요청에 실패했습니다. (${status})`;
+}
+
+try {
+  const response = await fetch("/api/v1/posts");
+  if (!response.ok) {
+    const body: unknown = await response.json().catch(() => null);
+    throw new Error(readApiErrorMessage(body, response.status));
+  }
+  const posts: Post[] = await response.json();
+  return posts;
+} catch (error: unknown) {
+  const message = error instanceof Error ? error.message : "알 수 없는 오류";
+  throw new Error(message);
+}
+```

@@ -1,0 +1,34 @@
+---
+description: React 컴포넌트·TypeScript 네이밍과 구조
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# React & TypeScript
+
+- React 컴포넌트는 함수로 작성한다.
+- Props, DTO, 상태 모델은 `interface` 또는 `type`으로 작성한다.
+- 여러 파일에서 쓰는 API DTO, 도메인 타입은 `src/types/`에 둔다. (예: `src/types/post.ts`)
+- 한 컴포넌트에서만 쓰는 Props 타입은 그 컴포넌트 파일 옆에 둔다.
+- SRP: 컴포넌트가 150줄을 넘으면 하위 컴포넌트로 분리한다.
+- 프레젠테이션(`src/components/`)과 페이지(`src/pages/`)를 분리한다.
+
+## 파일명
+
+- 컴포넌트 TSX: PascalCase (`PostCard.tsx`)
+- 훅·유틸·스토어: camelCase (`usePostStore.ts`, `apiClient.ts`)
+- 정적 자산: kebab-case 또는 소문자
+
+```tsx
+// ❌ BAD
+export class PostList extends React.Component {}
+
+// ✅ GOOD
+interface PostCardProps {
+  title: string;
+}
+
+export function PostCard({ title }: PostCardProps) {
+  return <article>{title}</article>;
+}
+```

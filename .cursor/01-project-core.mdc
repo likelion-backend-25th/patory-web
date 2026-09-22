@@ -1,0 +1,25 @@
+---
+description: SNS 프론트엔드 프로젝트 전역 표준 (스택, 아키텍처, AI 수정 규칙)
+alwaysApply: true
+---
+
+# Project Core
+
+스택: React 19 + TypeScript(strict) + Vite + Tailwind CSS + Zustand.
+백엔드는 Spring Boot + MyBatis REST API와 연동한다.
+
+- 함수형 컴포넌트와 표준 Hooks만 사용한다. class 컴포넌트, mixin, 구식 lifecycle은 금지.
+- `any` 금지. 불확실하면 `unknown` + 타입 가드.
+- 들여쓰기 2 spaces (TS/TSX/CSS/JSON).
+- 기존 파일은 필요한 부분만 수정한다.
+- 복잡한 비즈니스/비동기 흐름 주석은 한국어로 짧게 남긴다.
+- 중요한 아키텍처 선택에는 이유를 함께 설명한다.
+
+## 디렉터리
+
+- `src/types/` — 여러 파일에서 재사용하는 API DTO, 도메인 타입
+- `src/components/` — 재사용 UI
+- `src/pages/` — 페이지
+- `src/layouts/` — 레이아웃 (`RootLayout.tsx`)
+- `src/stores/` — Zustand 스토어
+- 경로 별칭: `@` → `/src`
