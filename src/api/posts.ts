@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/apiClient";
-import type { PostListSlice } from "@/types/post";
+import type { PostDetail, PostListSlice } from "@/types/post";
 
 export interface GetPostsParams {
   lastPostId?: number;
@@ -18,4 +18,8 @@ export function getPosts(
       size: params.size ?? 10,
     },
   });
+}
+
+export function getPost(postId: number, signal?: AbortSignal): Promise<PostDetail> {
+  return apiClient<PostDetail>(`/posts/${postId}`, { signal });
 }
