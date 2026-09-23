@@ -3,8 +3,11 @@ import { useAuthStore } from "@/stores/useAuthStore";
 
 function getApiPrefix(): string {
   const baseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
-  // 로컬은 비워 두고 Vite 프록시(/api)를 쓰고, Netlify는 백엔드 origin을 붙인다.
-  if (baseUrl) {
+  // HTTPS 사이트에서 HTTP API를 직접 치면 mixed content로 막히므로 상대경로를 쓴다.
+  if (
+    baseUrl &&
+    !(globalThis.location?.protocol === "https:" && baseUrl.startsWith("http://"))
+  ) {
     return `${baseUrl.replace(/\/$/, "")}/api/v1`;
   }
   return "/api/v1";
