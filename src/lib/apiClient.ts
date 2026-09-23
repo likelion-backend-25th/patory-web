@@ -1,21 +1,49 @@
 import { ApiError, readApiErrorMessage } from "@/types/api";
 import { useAuthStore } from "@/stores/useAuthStore";
 
-const API_PREFIX = "/api/v1";
+function getApiPrefix(): string {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+  // 로컬은 비워 두고 Vite 프록시(/api)를 쓰고, Netlify는 백엔드 origin을 붙인다.
+  if (baseUrl) {
+    return `${baseUrl.replace(/\/$/, "")}/api/v1`;
+  }
+  return "/api/v1";
+}
+
+type QueryValue = string | number | boolean | null | undefined;
 
 interface ApiClientOptions extends Omit<RequestInit, "body"> {
   body?: unknown;
+  query?: Record<string, QueryValue>;
+}
+
+function buildUrl(path: string, query?: Record<string, QueryValue>): string {
+  const url = `${getApiPrefix()}${path}`;
+  if (!query) {
+    return url;
+  }
+
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(query)) {
+    if (value === null || value === undefined) {
+      continue;
+    }
+    params.set(key, String(value));
+  }
+
+  const search = params.toString();
+  return search === "" ? url : `${url}?${search}`;
 }
 
 export async function apiClient<T>(
   path: string,
   options: ApiClientOptions = {},
 ): Promise<T> {
-  const { body, headers, ...rest } = options;
+  const { body, headers, query, ...rest } = options;
   const accessToken = useAuthStore.getState().accessToken;
 
   try {
-    const response = await fetch(`${API_PREFIX}${path}`, {
+    const response = await fetch(buildUrl(path, query), {
       ...rest,
       headers: {
         ...(body !== undefined ? { "Content-Type": "application/json" } : {}),

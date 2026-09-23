@@ -1,6 +1,96 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
-  title: Patory API
-  version: v1
-  description: 로컬 참고용 OpenAPI 초안. 서버 /v3/api-docs가 최신이다.
-paths: {}
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://3.39.133.123:8080
+    description: Generated server url
+paths:
+  /api/v1/running:
+    get:
+      tags:
+        - running-controller
+      operationId: runningCheck
+      responses:
+        "200":
+          description: OK
+  /api/v1/posts:
+    get:
+      tags:
+        - post-controller
+      operationId: getPostList
+      parameters:
+        - name: lastPostId
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/SliceResponsePostListResponse"
+components:
+  schemas:
+    PostListResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        type:
+          type: integer
+          format: int32
+        content:
+          type: string
+        bgmUrl:
+          type: string
+        isSubscriberOnly:
+          type: boolean
+        hashtags:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        memberId:
+          type: integer
+          format: int64
+        nickname:
+          type: string
+        profileImage:
+          type: string
+        imageUrls:
+          type: array
+          items:
+            type: string
+        likeCount:
+          type: integer
+          format: int64
+        commentCount:
+          type: integer
+          format: int64
+    SliceResponsePostListResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/PostListResponse"
+        hasNext:
+          type: boolean
+        lastPostId:
+          type: integer
+          format: int64

@@ -1,9 +1,6 @@
-import { createBrowserRouter, RouterProvider } from "react-router";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { RootLayout } from "@/layouts/RootLayout";
 import { FeedPage } from "@/pages/FeedPage";
-import { HomePage } from "@/pages/HomePage";
-import { LoginPage } from "@/pages/LoginPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 
 const router = createBrowserRouter([
@@ -11,16 +8,9 @@ const router = createBrowserRouter([
     path: "/",
     element: <RootLayout />,
     children: [
-      { index: true, element: <HomePage /> },
-      { path: "login", element: <LoginPage /> },
-      {
-        path: "feed",
-        element: (
-          <ProtectedRoute>
-            <FeedPage />
-          </ProtectedRoute>
-        ),
-      },
+      { index: true, element: <FeedPage /> },
+      { path: "feed", element: <Navigate to="/" replace /> },
+      { path: "login", element: <Navigate to="/" replace /> },
       { path: "*", element: <NotFoundPage /> },
     ],
   },
